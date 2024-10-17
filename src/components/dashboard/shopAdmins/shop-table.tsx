@@ -60,12 +60,13 @@ export function ShopTable({
     onRowsPerPageChange(parseInt(event.target.value, 10));
   };
 
-  const handleAdminLogin = (): void => {
+  // Modified to accept the shopId
+  const handleAdminLogin = (shopId: string): void => {
     const token = localStorage.getItem('custom-auth-token');
-
     const url = token
-      ? `https://shop.bellybasketstore.com?token=${encodeURIComponent(token)}`
-      : 'https://shop.bellybasketstore.com';
+      ? `https://shop.bellybasketstore.com?token=${encodeURIComponent(token)}&shopId=${shopId}`
+      : `https://shop.bellybasketstore.com?shopId=${shopId}`;
+
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
@@ -129,7 +130,9 @@ export function ShopTable({
                       <Button
                         variant="contained"
                         color="primary"
-                        onClick={handleAdminLogin}
+                        onClick={() => {
+                          handleAdminLogin(row._id); // Pass the shop ID when clicking the button
+                        }}
                         sx={{ textTransform: 'none', fontWeight: 'bold' }}
                       >
                         Login as Admin
