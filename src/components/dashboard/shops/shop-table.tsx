@@ -1,3 +1,4 @@
+import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -11,10 +12,9 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import * as React from 'react';
 
+import type { Shop } from '@/types/shop';
 import { useSelection } from '@/hooks/use-selection';
-import { Shop } from '@/types/shop';
 
 interface ShopTableProps {
   count?: number;
@@ -50,11 +50,11 @@ export function ShopTable({
     }
   }, [selected, onSelectedChange]);
 
-  const handlePageChange = (event: unknown, newPage: number) => {
+  const handlePageChange = (event: unknown, newPage: number): void => {
     onPageChange(newPage);
   };
 
-  const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     onRowsPerPageChange(parseInt(event.target.value, 10));
   };
 
@@ -109,9 +109,7 @@ export function ShopTable({
                       <Typography variant="subtitle2">{row.name}</Typography>
                     </Stack>
                   </TableCell>
-                  <TableCell>
-                    {row.owner ? `${row.owner.first_name} ${row.owner.last_name}` : 'N/A'}
-                  </TableCell>
+                  <TableCell>{row.owner ? `${row.owner.first_name} ${row.owner.last_name}` : 'N/A'}</TableCell>
                   <TableCell>{row.description}</TableCell>
                   <TableCell>{row.owner ? row.owner.email : 'N/A'}</TableCell>
                   <TableCell>{row.approved ? 'Verify' : 'NotVerify'}</TableCell>

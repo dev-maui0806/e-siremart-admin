@@ -1,4 +1,4 @@
-import { Shop } from '@/types/shop';
+import type { Shop } from '@/types/shop';
 
 import apiClient from '../api-client';
 

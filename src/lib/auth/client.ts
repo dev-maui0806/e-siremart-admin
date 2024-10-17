@@ -1,6 +1,7 @@
 'use client';
 
-import { User, isUser } from '../../types/user';
+import type { User } from '../../types/user';
+import { isUser } from '../../types/user';
 import apiClient from '../api-client';
 
 function generateToken(): string {
@@ -8,14 +9,6 @@ function generateToken(): string {
   window.crypto.getRandomValues(arr);
   return Array.from(arr, (v) => v.toString(16).padStart(2, '0')).join('');
 }
-
-// const user = {
-//   id: 'USR-000',
-//   avatar: '/assets/avatar.png',
-//   firstName: 'Sofia',
-//   lastName: 'Rivers',
-//   email: 'sofia@devias.io',
-// } satisfies User;
 
 export interface SignUpParams {
   firstName: string;
@@ -63,8 +56,8 @@ class AuthClient {
   async signInWithPassword(params: SignInWithPasswordParams): Promise<{ error?: string }> {
     const { email, password } = params;
     const data = {
-      "data":{
-        "attributes":{
+      "data": {
+        "attributes": {
           email,
           password
         }

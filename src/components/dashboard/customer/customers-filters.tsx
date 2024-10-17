@@ -9,7 +9,7 @@ interface CustomersFiltersProps {
 }
 
 export function CustomersFilters({ onSearch }: CustomersFiltersProps): React.JSX.Element {
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     onSearch(event.target.value);
   };
 

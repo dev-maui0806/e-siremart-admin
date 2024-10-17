@@ -42,7 +42,7 @@ export default function Page(): React.JSX.Element {
     status: true,
   });
 
-  const fetchCustomers = async () => {
+  const fetchCustomers = async (): Promise<void> => {
     const result = await usersClient.getCustomers(page, rowsPerPage, searchQuery);
     if (result.data) {
       setCustomers(result.data);
@@ -59,7 +59,7 @@ export default function Page(): React.JSX.Element {
     void fetchCustomers();
   }, [page, rowsPerPage, searchQuery]);
 
-  const handleAdd = async () => {
+  const handleAdd = async (): Promise<void> => {
     await usersClient.addUser(newCustomer);
     setOpen(false);
     setNewCustomer({
@@ -76,14 +76,14 @@ export default function Page(): React.JSX.Element {
     await fetchCustomers();
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (): Promise<void> => {
     const deletePromises = Array.from(selectedCustomerIds).map((id) => usersClient.deleteUser(id));
     await Promise.all(deletePromises);
     setSelectedCustomerIds(new Set());
     await fetchCustomers();
   };
 
-  const handleAdminAccess = async () => {
+  const handleAdminAccess = async (): Promise<void> => {
     const grantAdminsPromises = Array.from(selectedCustomerIds).map((id) => usersClient.grantAdminAccess(id));
     await Promise.all(grantAdminsPromises);
     setSelectedCustomerIds(new Set());

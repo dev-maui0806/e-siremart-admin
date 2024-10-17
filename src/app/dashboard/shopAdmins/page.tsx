@@ -16,7 +16,7 @@ import { Trash as TrashIcon } from '@phosphor-icons/react/dist/ssr/Trash';
 
 // import { Upload as UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
 
-import type { ShopAdmin } from '@/types/ShopAdmin';
+import type { ShopAdmin } from '@/types/shopAdmin';
 import { shopClient } from '@/lib/shopAdmins/client';
 import { ShopFilters } from '@/components/dashboard/shopAdmins/shop-filters';
 import { ShopTable } from '@/components/dashboard/shopAdmins/shop-table';
@@ -44,11 +44,11 @@ export default function Page(): React.JSX.Element {
     owner: {
       first_name: '',
       last_name: '',
-      email: ''
-    }
+      email: '',
+    },
   });
 
-  const fetchCustomers = async () => {
+  const fetchCustomers = async (): Promise<void> => {
     const result = await shopClient.getUniversities(page, rowsPerPage, searchQuery);
     if (result.data) {
       setCustomers(result.data);
@@ -65,7 +65,7 @@ export default function Page(): React.JSX.Element {
     void fetchCustomers();
   }, [page, rowsPerPage, searchQuery]);
 
-  const handleAdd = async () => {
+  const handleAdd = async (): Promise<void> => {
     await shopClient.addShop(newCustomer);
     setOpen(false);
     setNewCustomer({
@@ -81,20 +81,20 @@ export default function Page(): React.JSX.Element {
       owner: {
         first_name: '',
         last_name: '',
-        email: ''
-      }
+        email: '',
+      },
     });
     await fetchCustomers();
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (): Promise<void> => {
     const deletePromises = Array.from(selectedCustomerIds).map((id) => shopClient.deleteShop(id));
     await Promise.all(deletePromises);
     setSelectedCustomerIds(new Set());
     await fetchCustomers();
   };
 
-  const handleApprove = async () => {
+  const handleApprove = async (): Promise<void> => {
     const approve = Array.from(selectedCustomerIds).map((id) => shopClient.approveShop(id));
     await Promise.all(approve);
     setSelectedCustomerIds(new Set());

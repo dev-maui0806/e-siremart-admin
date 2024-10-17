@@ -9,7 +9,7 @@ interface ShopFiltersProps {
 }
 
 export function ShopFilters({ onSearch }: ShopFiltersProps): React.JSX.Element {
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     onSearch(event.target.value);
   };
 

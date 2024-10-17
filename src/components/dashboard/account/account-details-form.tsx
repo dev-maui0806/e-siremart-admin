@@ -35,7 +35,7 @@ export function AccountDetailsForm(): React.JSX.Element {
     timezone: '',
     _id: '',
   });
-  const fetchProfile = async () => {
+  const fetchProfile = async (): Promise<void> => {
     const { data } = await authClient.getUser();
     if (data) {
       setProfile(data);

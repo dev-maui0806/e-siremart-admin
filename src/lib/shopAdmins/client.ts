@@ -1,4 +1,4 @@
-import {ShopAdmin} from '@/types/ShopAdmin'
+import type {ShopAdmin} from '@/types/shopAdmin'
 
 
 import apiClient from '../api-client';
