@@ -14,9 +14,10 @@ export interface Selection<T = string> {
 export function useSelection<T = string>(keys: T[] = []): Selection<T> {
   const [selected, setSelected] = React.useState<Set<T>>(new Set());
 
+  // Only reset selection when keys truly change (e.g., length change)
   React.useEffect(() => {
     setSelected(new Set());
-  }, [keys]);
+  }, [keys.length]); // Note: using `keys.length` to reduce unnecessary resets
 
   const handleDeselectAll = React.useCallback(() => {
     setSelected(new Set());
@@ -43,7 +44,7 @@ export function useSelection<T = string>(keys: T[] = []): Selection<T> {
   }, []);
 
   const selectedAny = selected.size > 0;
-  const selectedAll = selected.size === keys.length;
+  const selectedAll = selected.size === keys.length && keys.length > 0;
 
   return {
     deselectAll: handleDeselectAll,

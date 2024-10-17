@@ -1,7 +1,7 @@
 import * as React from 'react';
-import Link from 'next/link';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
@@ -28,7 +28,6 @@ interface ShopTableProps {
 }
 
 export function ShopTable({
-  // count = 0,
   rows = [],
   page = 0,
   rowsPerPage = 0,
@@ -36,7 +35,6 @@ export function ShopTable({
   onRowsPerPageChange,
   onSelectedChange,
 }: ShopTableProps): React.JSX.Element {
-  // Filter rows to include only those with approved = true
   const filteredRows = rows.filter((row) => row.approved);
 
   const rowIds = React.useMemo(() => {
@@ -60,6 +58,15 @@ export function ShopTable({
 
   const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     onRowsPerPageChange(parseInt(event.target.value, 10));
+  };
+
+  const handleAdminLogin = (): void => {
+    const token = localStorage.getItem('custom-auth-token');
+
+    const url = token
+      ? `https://shop.bellybasketstore.com?token=${encodeURIComponent(token)}`
+      : 'https://shop.bellybasketstore.com';
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -86,7 +93,7 @@ export function ShopTable({
               <TableCell>Description</TableCell>
               <TableCell>Email</TableCell>
               <TableCell>Approved</TableCell>
-              <TableCell>Join option</TableCell>
+              <TableCell style={{ width: '150px', textAlign: 'center' }}>Join option</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -117,10 +124,17 @@ export function ShopTable({
                   <TableCell>{row.description}</TableCell>
                   <TableCell>{row.owner ? row.owner.email : 'N/A'}</TableCell>
                   <TableCell>{row.approved ? 'Verify' : 'NotVerify'}</TableCell>
-                  <TableCell>
-                    <Link href="#" style={{ textDecorationLine: 'none', fontWeight: 'bolder' }}>
-                      Login as Admin
-                    </Link>
+                  <TableCell style={{ width: '200px', textAlign: 'center' }}>
+                    <Box>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleAdminLogin}
+                        sx={{ textTransform: 'none', fontWeight: 'bold' }}
+                      >
+                        Login as Admin
+                      </Button>
+                    </Box>
                   </TableCell>
                 </TableRow>
               );

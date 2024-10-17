@@ -14,7 +14,6 @@ import { CheckFat } from '@phosphor-icons/react';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
 import { Trash as TrashIcon } from '@phosphor-icons/react/dist/ssr/Trash';
 
-
 import type { Shop } from '@/types/shop';
 import { shopClient } from '@/lib/shops/client';
 import { ShopFilters } from '@/components/dashboard/shops/shop-filters';
@@ -60,10 +59,6 @@ export default function Page(): React.JSX.Element {
     }
   };
 
-  useEffect(() => {
-    void fetchCustomers();
-  }, [page, rowsPerPage, searchQuery]);
-
   const handleAdd = async (): Promise<void> => {
     await shopClient.addShop(newCustomer);
     setOpen(false);
@@ -85,6 +80,10 @@ export default function Page(): React.JSX.Element {
     });
     await fetchCustomers();
   };
+
+  useEffect(() => {
+    void fetchCustomers();
+  }, [page, rowsPerPage, searchQuery]);
 
   const handleDelete = async (): Promise<void> => {
     const deletePromises = Array.from(selectedCustomerIds).map((id) => shopClient.deleteShop(id));

@@ -15,7 +15,7 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
-import { Customer } from '@/types/customer';
+import type { Customer } from '@/types/customer';
 import { useSelection } from '@/hooks/use-selection';
 
 interface CustomersTableProps {
@@ -25,7 +25,7 @@ interface CustomersTableProps {
   rowsPerPage?: number;
   onPageChange: (newPage: number) => void;
   onRowsPerPageChange: (newRowsPerPage: number) => void;
-  onSelectedChange?: (selected: Set<string>) => void; // Add this line
+  onSelectedChange?: (selected: Set<string>) => void;
 }
 
 export function CustomersTable({
@@ -35,7 +35,7 @@ export function CustomersTable({
   rowsPerPage = 0,
   onPageChange,
   onRowsPerPageChange,
-  onSelectedChange, // Add this line
+  onSelectedChange,
 }: CustomersTableProps): React.JSX.Element {
   const rowIds = React.useMemo(() => {
     return rows.map((customer) => customer._id);
@@ -53,11 +53,11 @@ export function CustomersTable({
     }
   }, [selected, onSelectedChange]);
 
-  const handlePageChange = (event: unknown, newPage: number) => {
+  const handlePageChange = (event: unknown, newPage: number): void => {
     onPageChange(newPage);
   };
 
-  const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     onRowsPerPageChange(parseInt(event.target.value, 10));
   };
 
@@ -93,7 +93,7 @@ export function CustomersTable({
               const isSelected = selected?.has(row._id);
 
               return (
-                <TableRow hover key={row.id} selected={isSelected}>
+                <TableRow hover key={row._id} selected={isSelected}>
                   <TableCell padding="checkbox">
                     <Checkbox
                       checked={isSelected}
@@ -109,22 +109,15 @@ export function CustomersTable({
                   <TableCell>
                     <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
                       <Avatar src={row.avatar} />
-                      <Typography variant="subtitle2">{`${row.first_name}  ${row.last_name}`}</Typography>
+                      <Typography variant="subtitle2">{`${row.first_name} ${row.last_name}`}</Typography>
                     </Stack>
                   </TableCell>
                   <TableCell>{row.email}</TableCell>
                   <TableCell>{row.status ? 'Verify' : 'NotVerify'}</TableCell>
                   <TableCell>{row.phone_number}</TableCell>
                   <TableCell>{row.created_at}</TableCell>
-                  {/* <TableCell>{row.is_owner ? 'Shop Owner' : 'Customer'}</TableCell> */}
                   <TableCell>
-                    {row.is_owner
-                      ? 'Shop Owner'
-                      : row.isAdmin
-                        ? 'Admin'
-                        : row.isDelivery
-                          ? 'Deliveryman'
-                          : 'Customer'}
+                    {row.is_owner ? 'Shop Owner' : row.isAdmin ? 'Admin' : row.isDelivery ? 'Deliveryman' : 'Customer'}
                   </TableCell>
                 </TableRow>
               );

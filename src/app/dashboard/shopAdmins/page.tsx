@@ -7,7 +7,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Trash as TrashIcon } from '@phosphor-icons/react/dist/ssr/Trash';
 
-import type { ShopAdmin } from '@/types/shopAdmin';
+import type { ShopAdmin } from '@/types/ShopAdmin';
 import { shopClient } from '@/lib/shopAdmins/client';
 import { ShopFilters } from '@/components/dashboard/shopAdmins/shop-filters';
 import { ShopTable } from '@/components/dashboard/shopAdmins/shop-table';
