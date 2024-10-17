@@ -10,11 +10,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-// import { Download as DownloadIcon } from '@phosphor-icons/react/dist/ssr/Download';
-import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
 import { Trash as TrashIcon } from '@phosphor-icons/react/dist/ssr/Trash';
-
-// import { Upload as UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
 
 import type { ShopAdmin } from '@/types/shopAdmin';
 import { shopClient } from '@/lib/shopAdmins/client';
@@ -94,29 +90,13 @@ export default function Page(): React.JSX.Element {
     await fetchCustomers();
   };
 
-  const handleApprove = async (): Promise<void> => {
-    const approve = Array.from(selectedCustomerIds).map((id) => shopClient.approveShop(id));
-    await Promise.all(approve);
-    setSelectedCustomerIds(new Set());
-    await fetchCustomers();
-  };
-
   return (
     <Stack spacing={3}>
       <Stack direction="row" spacing={3}>
         <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
-          <Typography variant="h4">Shops</Typography>
+          <Typography variant="h4">Shop Admins</Typography>
         </Stack>
         <div>
-          <Button
-            startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />}
-            variant="contained"
-            onClick={() => {
-              setOpen(true);
-            }}
-          >
-            Add
-          </Button>
           <Button
             color="error"
             startIcon={<TrashIcon fontSize="var(--icon-fontSize-md)" />}
@@ -126,16 +106,6 @@ export default function Page(): React.JSX.Element {
             sx={{ ml: 1 }}
           >
             Delete
-          </Button>
-          <Button
-            color="info"
-            startIcon={<TrashIcon fontSize="var(--icon-fontSize-md)" />}
-            variant="contained"
-            onClick={handleApprove}
-            disabled={selectedCustomerIds.size === 0}
-            sx={{ ml: 1 }}
-          >
-            Approve
           </Button>
         </div>
       </Stack>

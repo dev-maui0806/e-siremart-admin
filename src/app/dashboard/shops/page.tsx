@@ -48,7 +48,7 @@ export default function Page(): React.JSX.Element {
     }
   });
 
-  const fetchCustomers = async () => {
+  const fetchCustomers = async (): Promise<void> => {
     const result = await shopClient.getUniversities(page, rowsPerPage, searchQuery);
     if (result.data) {
       setCustomers(result.data);
@@ -65,7 +65,7 @@ export default function Page(): React.JSX.Element {
     void fetchCustomers();
   }, [page, rowsPerPage, searchQuery]);
 
-  const handleAdd = async () => {
+  const handleAdd = async (): Promise<void> => {
     await shopClient.addShop(newCustomer);
     setOpen(false);
     setNewCustomer({
@@ -87,14 +87,14 @@ export default function Page(): React.JSX.Element {
     await fetchCustomers();
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (): Promise<void> => {
     const deletePromises = Array.from(selectedCustomerIds).map((id) => shopClient.deleteShop(id));
     await Promise.all(deletePromises);
     setSelectedCustomerIds(new Set());
     await fetchCustomers();
   };
 
-  const handleApprove = async () => {
+  const handleApprove = async (): Promise<void> => {
     const approve = Array.from(selectedCustomerIds).map((id) => shopClient.approveShop(id));
     await Promise.all(approve);
     setSelectedCustomerIds(new Set());
