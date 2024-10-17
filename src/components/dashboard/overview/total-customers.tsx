@@ -15,9 +15,6 @@ export interface TotalCustomersProps {
 }
 
 export function TotalCustomers({ diff, sx, value }: TotalCustomersProps): React.JSX.Element {
-  // const TrendIcon = trend === 'up' ? ArrowUpIcon : ArrowDownIcon;
-  // const trendColor = trend === 'up' ? 'var(--mui-palette-success-main)' : 'var(--mui-palette-error-main)';
-
   return (
     <Card sx={sx}>
       <CardContent>
@@ -35,15 +32,7 @@ export function TotalCustomers({ diff, sx, value }: TotalCustomersProps): React.
           </Stack>
           {diff ? (
             <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-              <Stack sx={{ alignItems: 'center' }} direction="row" spacing={0.5}>
-                {/* <TrendIcon color={trendColor} fontSize="var(--icon-fontSize-md)" /> */}
-                {/* <Typography color={trendColor} variant="body2">
-                  {diff}%
-                </Typography> */}
-              </Stack>
-              {/* <Typography color="text.secondary" variant="caption">
-                Since last month
-              </Typography> */}
+              <Stack sx={{ alignItems: 'center' }} direction="row" spacing={0.5}></Stack>
             </Stack>
           ) : null}
         </Stack>

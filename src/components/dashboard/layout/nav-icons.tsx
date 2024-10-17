@@ -3,6 +3,7 @@ import { ChartPie as ChartPieIcon } from '@phosphor-icons/react/dist/ssr/ChartPi
 import { GearSix as GearSixIcon } from '@phosphor-icons/react/dist/ssr/GearSix';
 import { PlugsConnected as PlugsConnectedIcon } from '@phosphor-icons/react/dist/ssr/PlugsConnected';
 import { Storefront as StoreFront } from '@phosphor-icons/react/dist/ssr/Storefront';
+import { UserList } from '@phosphor-icons/react';
 import { User as UserIcon } from '@phosphor-icons/react/dist/ssr/User';
 import { Users as UsersIcon } from '@phosphor-icons/react/dist/ssr/Users';
 import { XSquare } from '@phosphor-icons/react/dist/ssr/XSquare';
@@ -15,4 +16,5 @@ export const navIcons = {
   user: UserIcon,
   users: UsersIcon,
   shops: StoreFront,
+  shopAdmins:UserList 
 } as Record<string, Icon>;

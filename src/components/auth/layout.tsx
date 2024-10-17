@@ -53,14 +53,6 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
               A professional dashboard for admin to manage all products.
             </Typography>
           </Stack>
-          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Box
-              component="img"
-              alt="Widgets"
-              src="/assets/Vt-BellyBasket.png"
-              sx={{ height: 'auto', width: '100%', maxWidth: '600px' }}
-            />
-          </Box>
         </Stack>
       </Box>
     </Box>

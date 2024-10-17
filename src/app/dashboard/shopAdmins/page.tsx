@@ -16,13 +16,13 @@ import { Trash as TrashIcon } from '@phosphor-icons/react/dist/ssr/Trash';
 
 // import { Upload as UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
 
-import type { Customer } from '@/types/customer';
-import { usersClient } from '@/lib/users/client';
-import { CustomersFilters } from '@/components/dashboard/customer/customers-filters';
-import { CustomersTable } from '@/components/dashboard/customer/customers-table';
+import type { ShopAdmin } from '@/types/ShopAdmin';
+import { shopClient } from '@/lib/shopAdmins/client';
+import { ShopFilters } from '@/components/dashboard/shopAdmins/shop-filters';
+import { ShopTable } from '@/components/dashboard/shopAdmins/shop-table';
 
 export default function Page(): React.JSX.Element {
-  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [customers, setCustomers] = useState<ShopAdmin[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [total, setTotal] = useState(0);
@@ -30,20 +30,26 @@ export default function Page(): React.JSX.Element {
   const [error, setError] = useState<string | null>(null);
   const [selectedCustomerIds, setSelectedCustomerIds] = useState<Set<string>>(new Set());
   const [open, setOpen] = useState(false);
-  const [newCustomer, setNewCustomer] = useState<Customer>({
+  const [newCustomer, setNewCustomer] = useState<ShopAdmin>({
     _id: '',
+    name: '',
+    description: '',
     email: '',
-    phone_number: '',
-    first_name: '',
-    middle_name: '',
-    last_name: '',
-    publishing_name: '',
     password: '',
-    status: true,
+    approved: false,
+    first_name: '',
+    last_name: '',
+    phone_number: '',
+    ownerId: '',
+    owner: {
+      first_name: '',
+      last_name: '',
+      email: ''
+    }
   });
 
   const fetchCustomers = async () => {
-    const result = await usersClient.getCustomers(page, rowsPerPage, searchQuery);
+    const result = await shopClient.getUniversities(page, rowsPerPage, searchQuery);
     if (result.data) {
       setCustomers(result.data);
       setTotal(result.total || 0);
@@ -60,32 +66,37 @@ export default function Page(): React.JSX.Element {
   }, [page, rowsPerPage, searchQuery]);
 
   const handleAdd = async () => {
-    await usersClient.addUser(newCustomer);
+    await shopClient.addShop(newCustomer);
     setOpen(false);
     setNewCustomer({
       _id: '',
+      name: '',
+      description: '',
       email: '',
-      phone_number: '',
-      first_name: '',
-      middle_name: '',
-      last_name: '',
-      publishing_name: '',
       password: '',
-      status: true,
+      approved: false,
+      first_name: '',
+      last_name: '',
+      phone_number: '',
+      owner: {
+        first_name: '',
+        last_name: '',
+        email: ''
+      }
     });
     await fetchCustomers();
   };
 
   const handleDelete = async () => {
-    const deletePromises = Array.from(selectedCustomerIds).map((id) => usersClient.deleteUser(id));
+    const deletePromises = Array.from(selectedCustomerIds).map((id) => shopClient.deleteShop(id));
     await Promise.all(deletePromises);
     setSelectedCustomerIds(new Set());
     await fetchCustomers();
   };
 
-  const handleAdminAccess = async () => {
-    const grantAdminsPromises = Array.from(selectedCustomerIds).map((id) => usersClient.grantAdminAccess(id));
-    await Promise.all(grantAdminsPromises);
+  const handleApprove = async () => {
+    const approve = Array.from(selectedCustomerIds).map((id) => shopClient.approveShop(id));
+    await Promise.all(approve);
     setSelectedCustomerIds(new Set());
     await fetchCustomers();
   };
@@ -94,7 +105,7 @@ export default function Page(): React.JSX.Element {
     <Stack spacing={3}>
       <Stack direction="row" spacing={3}>
         <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
-          <Typography variant="h4">Customers</Typography>
+          <Typography variant="h4">Shops</Typography>
         </Stack>
         <div>
           <Button
@@ -120,21 +131,21 @@ export default function Page(): React.JSX.Element {
             color="info"
             startIcon={<TrashIcon fontSize="var(--icon-fontSize-md)" />}
             variant="contained"
-            onClick={handleAdminAccess}
+            onClick={handleApprove}
             disabled={selectedCustomerIds.size === 0}
             sx={{ ml: 1 }}
           >
-            Grant Admin Access
+            Approve
           </Button>
         </div>
       </Stack>
-      <CustomersFilters
+      <ShopFilters
         onSearch={(query) => {
           setSearchQuery(query);
         }}
       />
       {error && <Typography color="error">{error}</Typography>}
-      <CustomersTable
+      <ShopTable
         count={total}
         page={page}
         rows={customers}
@@ -153,11 +164,33 @@ export default function Page(): React.JSX.Element {
           setOpen(false);
         }}
       >
-        <DialogTitle>Add New Customer</DialogTitle>
+        <DialogTitle>Add New Shop</DialogTitle>
         <DialogContent>
           <TextField
             margin="dense"
-            label="First Name"
+            label="Shop Name"
+            type="text"
+            fullWidth
+            variant="standard"
+            value={newCustomer.name}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setNewCustomer({ ...newCustomer, name: e.target.value });
+            }}
+          />
+          <TextField
+            margin="dense"
+            label="Shop Description"
+            type="text"
+            fullWidth
+            variant="standard"
+            value={newCustomer.description}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setNewCustomer({ ...newCustomer, description: e.target.value });
+            }}
+          />
+          <TextField
+            margin="dense"
+            label="Owner First Name"
             type="text"
             fullWidth
             variant="standard"
@@ -168,24 +201,24 @@ export default function Page(): React.JSX.Element {
           />
           <TextField
             margin="dense"
-            label="Middle Name"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={newCustomer.middle_name}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setNewCustomer({ ...newCustomer, middle_name: e.target.value });
-            }}
-          />
-          <TextField
-            margin="dense"
-            label="Last Name"
+            label="Owner Last Name"
             type="text"
             fullWidth
             variant="standard"
             value={newCustomer.last_name}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setNewCustomer({ ...newCustomer, last_name: e.target.value });
+            }}
+          />
+          <TextField
+            margin="dense"
+            label="Owner Phone Number"
+            type="text"
+            fullWidth
+            variant="standard"
+            value={newCustomer.phone_number}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setNewCustomer({ ...newCustomer, phone_number: e.target.value });
             }}
           />
           <TextField
@@ -197,29 +230,6 @@ export default function Page(): React.JSX.Element {
             value={newCustomer.email}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setNewCustomer({ ...newCustomer, email: e.target.value });
-            }}
-          />
-          <TextField
-            margin="dense"
-            label="Phone Number"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={newCustomer.phone_number}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setNewCustomer({ ...newCustomer, phone_number: e.target.value });
-            }}
-          />
-
-          <TextField
-            margin="dense"
-            label="Publishing Name"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={newCustomer.publishing_name}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setNewCustomer({ ...newCustomer, publishing_name: e.target.value });
             }}
           />
           <TextField

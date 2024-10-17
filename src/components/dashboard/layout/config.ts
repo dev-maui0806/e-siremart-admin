@@ -5,6 +5,8 @@ export const navItems = [
   { key: 'overview', title: 'Overview', href: paths.dashboard.overview, icon: 'chart-pie' },
   { key: 'customers', title: 'Customers', href: paths.dashboard.customers, icon: 'users' },
   { key: 'shop', title: 'Shops', href: paths.dashboard.shop, icon: 'shops' },
+  { key: 'shopAdmin', title: 'ShopAdmins', href: paths.dashboard.shopAdmin, icon: 'shopAdmins' },
+  
   {
     key: 'integrations',
     title: 'Integrations',
