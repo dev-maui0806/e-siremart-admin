@@ -2,12 +2,7 @@
 
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { TextField } from '@mui/material';
 import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Trash as TrashIcon } from '@phosphor-icons/react/dist/ssr/Trash';
@@ -23,65 +18,22 @@ export default function Page(): React.JSX.Element {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [total, setTotal] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
-  const [error, setError] = useState<string | null>(null);
   const [selectedCustomerIds, setSelectedCustomerIds] = useState<Set<string>>(new Set());
-  const [open, setOpen] = useState(false);
-  const [newCustomer, setNewCustomer] = useState<ShopAdmin>({
-    _id: '',
-    name: '',
-    description: '',
-    email: '',
-    password: '',
-    approved: false,
-    first_name: '',
-    last_name: '',
-    phone_number: '',
-    ownerId: '',
-    owner: {
-      first_name: '',
-      last_name: '',
-      email: '',
-    },
-  });
 
   const fetchCustomers = async (): Promise<void> => {
     const result = await shopClient.getUniversities(page, rowsPerPage, searchQuery);
     if (result.data) {
       setCustomers(result.data);
       setTotal(result.total || 0);
-      setError(null);
     } else {
       setCustomers([]);
       setTotal(0);
-      setError(result.error || 'Failed to fetch customers');
     }
   };
 
   useEffect(() => {
     void fetchCustomers();
   }, [page, rowsPerPage, searchQuery]);
-
-  const handleAdd = async (): Promise<void> => {
-    await shopClient.addShop(newCustomer);
-    setOpen(false);
-    setNewCustomer({
-      _id: '',
-      name: '',
-      description: '',
-      email: '',
-      password: '',
-      approved: false,
-      first_name: '',
-      last_name: '',
-      phone_number: '',
-      owner: {
-        first_name: '',
-        last_name: '',
-        email: '',
-      },
-    });
-    await fetchCustomers();
-  };
 
   const handleDelete = async (): Promise<void> => {
     const deletePromises = Array.from(selectedCustomerIds).map((id) => shopClient.deleteShop(id));
@@ -114,7 +66,6 @@ export default function Page(): React.JSX.Element {
           setSearchQuery(query);
         }}
       />
-      {error && <Typography color="error">{error}</Typography>}
       <ShopTable
         count={total}
         page={page}
@@ -128,105 +79,7 @@ export default function Page(): React.JSX.Element {
         }}
         onSelectedChange={setSelectedCustomerIds} // Pass the setSelectedCustomerIds function
       />
-      <Dialog
-        open={open}
-        onClose={() => {
-          setOpen(false);
-        }}
-      >
-        <DialogTitle>Add New Shop</DialogTitle>
-        <DialogContent>
-          <TextField
-            margin="dense"
-            label="Shop Name"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={newCustomer.name}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setNewCustomer({ ...newCustomer, name: e.target.value });
-            }}
-          />
-          <TextField
-            margin="dense"
-            label="Shop Description"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={newCustomer.description}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setNewCustomer({ ...newCustomer, description: e.target.value });
-            }}
-          />
-          <TextField
-            margin="dense"
-            label="Owner First Name"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={newCustomer.first_name}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setNewCustomer({ ...newCustomer, first_name: e.target.value });
-            }}
-          />
-          <TextField
-            margin="dense"
-            label="Owner Last Name"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={newCustomer.last_name}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setNewCustomer({ ...newCustomer, last_name: e.target.value });
-            }}
-          />
-          <TextField
-            margin="dense"
-            label="Owner Phone Number"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={newCustomer.phone_number}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setNewCustomer({ ...newCustomer, phone_number: e.target.value });
-            }}
-          />
-          <TextField
-            margin="dense"
-            label="Email"
-            type="email"
-            fullWidth
-            variant="standard"
-            value={newCustomer.email}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setNewCustomer({ ...newCustomer, email: e.target.value });
-            }}
-          />
-          <TextField
-            margin="dense"
-            label="Password"
-            type="password"
-            fullWidth
-            variant="standard"
-            value={newCustomer.password}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setNewCustomer({ ...newCustomer, password: e.target.value });
-            }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              setOpen(false);
-            }}
-          >
-            Cancel
-          </Button>
-          <Button onClick={handleAdd} variant="contained">
-            Add
-          </Button>
-        </DialogActions>
-      </Dialog>
+
     </Stack>
   );
 }

@@ -10,11 +10,10 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-// import { Download as DownloadIcon } from '@phosphor-icons/react/dist/ssr/Download';
+import { CheckFat } from '@phosphor-icons/react';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
 import { Trash as TrashIcon } from '@phosphor-icons/react/dist/ssr/Trash';
 
-// import { Upload as UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
 
 import type { Shop } from '@/types/shop';
 import { shopClient } from '@/lib/shops/client';
@@ -44,8 +43,8 @@ export default function Page(): React.JSX.Element {
     owner: {
       first_name: '',
       last_name: '',
-      email: ''
-    }
+      email: '',
+    },
   });
 
   const fetchCustomers = async (): Promise<void> => {
@@ -81,8 +80,8 @@ export default function Page(): React.JSX.Element {
       owner: {
         first_name: '',
         last_name: '',
-        email: ''
-      }
+        email: '',
+      },
     });
     await fetchCustomers();
   };
@@ -129,7 +128,7 @@ export default function Page(): React.JSX.Element {
           </Button>
           <Button
             color="info"
-            startIcon={<TrashIcon fontSize="var(--icon-fontSize-md)" />}
+            startIcon={<CheckFat fontSize="var(--icon-fontSize-md)" />}
             variant="contained"
             onClick={handleApprove}
             disabled={selectedCustomerIds.size === 0}
@@ -213,7 +212,7 @@ export default function Page(): React.JSX.Element {
           <TextField
             margin="dense"
             label="Owner Phone Number"
-            type="text"
+            type="number"
             fullWidth
             variant="standard"
             value={newCustomer.phone_number}

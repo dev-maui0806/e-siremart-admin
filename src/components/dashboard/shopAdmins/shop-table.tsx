@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Link from 'next/link';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -13,7 +14,7 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
-import type { ShopAdmin } from '@/types/shopAdmin';
+import type { ShopAdmin } from '@/types/ShopAdmin';
 import { useSelection } from '@/hooks/use-selection';
 
 interface ShopTableProps {
@@ -27,7 +28,7 @@ interface ShopTableProps {
 }
 
 export function ShopTable({
-  count = 0,
+  // count = 0,
   rows = [],
   page = 0,
   rowsPerPage = 0,
@@ -35,14 +36,17 @@ export function ShopTable({
   onRowsPerPageChange,
   onSelectedChange,
 }: ShopTableProps): React.JSX.Element {
+  // Filter rows to include only those with approved = true
+  const filteredRows = rows.filter((row) => row.approved);
+
   const rowIds = React.useMemo(() => {
-    return rows.map((shop) => shop._id);
-  }, [rows]);
+    return filteredRows.map((shop) => shop._id);
+  }, [filteredRows]);
 
   const { selectAll, deselectAll, selectOne, deselectOne, selected } = useSelection(rowIds);
 
-  const selectedSome = (selected?.size ?? 0) > 0 && (selected?.size ?? 0) < rows.length;
-  const selectedAll = rows.length > 0 && selected?.size === rows.length;
+  const selectedSome = (selected?.size ?? 0) > 0 && (selected?.size ?? 0) < filteredRows.length;
+  const selectedAll = filteredRows.length > 0 && selected?.size === filteredRows.length;
 
   React.useEffect(() => {
     if (onSelectedChange) {
@@ -82,11 +86,11 @@ export function ShopTable({
               <TableCell>Description</TableCell>
               <TableCell>Email</TableCell>
               <TableCell>Approved</TableCell>
-              <TableCell>Created At</TableCell>
+              <TableCell>Join option</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => {
+            {filteredRows.map((row) => {
               const isSelected = selected?.has(row._id);
 
               return (
@@ -113,7 +117,11 @@ export function ShopTable({
                   <TableCell>{row.description}</TableCell>
                   <TableCell>{row.owner ? row.owner.email : 'N/A'}</TableCell>
                   <TableCell>{row.approved ? 'Verify' : 'NotVerify'}</TableCell>
-                  <TableCell>{row.createdAt}</TableCell>
+                  <TableCell>
+                    <Link href="#" style={{ textDecorationLine: 'none', fontWeight: 'bolder' }}>
+                      Login as Admin
+                    </Link>
+                  </TableCell>
                 </TableRow>
               );
             })}
@@ -123,7 +131,7 @@ export function ShopTable({
       <Divider />
       <TablePagination
         component="div"
-        count={count}
+        count={filteredRows.length}
         onRowsPerPageChange={handleRowsPerPageChange}
         page={page}
         rowsPerPage={rowsPerPage}
