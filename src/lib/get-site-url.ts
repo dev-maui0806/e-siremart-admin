@@ -11,7 +11,7 @@ export function getSiteURL(): string {
 }
 
 export function getBESiteURL(): string {
-  let url = `https://shop.vtbazaar.net/api/v1/`;
+  let url = `https://api.bellybasketstore.in/api/v1/`;
   // Make sure to include `https://` when not localhost.
   url = url.includes('http') ? url : `https://${url}`;
   // Make sure to include a trailing `/`.
