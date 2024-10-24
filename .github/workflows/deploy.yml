@@ -1,23 +1,38 @@
-name: Deploy to Ubuntu Server
+name: Deploy Next.js to Ubuntu Server
 
 on:
   push:
     branches:
-      - main
+      - main  # Change this to your main branch name
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Install SSH Key
-      uses: webfactory/ssh-agent@v0.5.3
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
       with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+        node-version: '18'
 
-    - name: Deploy via SSH
-      run: |
-        ssh ubuntu@your-server-ip "cd /var/www/Admin.bellybasketstore && git pull origin main && yarn install && yarn build && sudo systemctl restart nginx"
+    - name: Install dependencies
+      run: yarn install
+
+    - name: Build project
+      run: yarn build
+
+    - name: Deploy to Server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_IP }}  # Set up SERVER_IP secret in GitHub
+        username: ${{ secrets.SSH_USER }}  # Set up SSH_USER secret in GitHub
+        key: ${{ secrets.SSH_PRIVATE_KEY }}  # Set up SSH_PRIVATE_KEY secret in GitHub
+        script: |
+          cd /var/www/admin.bellybasketstore  # Replace with your directory on the server
+          git pull origin main
+          yarn install
+          yarn build
+          pm2 restart all  # PM2 to manage the process
