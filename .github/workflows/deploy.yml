@@ -3,36 +3,36 @@ name: Deploy Next.js to Ubuntu Server
 on:
   push:
     branches:
-      - main  # Change this to your main branch name
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '18'
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
 
-    - name: Install dependencies
-      run: yarn install
+      - name: Install dependencies
+        run: yarn install
 
-    - name: Build project
-      run: yarn build
+      - name: Build project
+        run: yarn build
 
-    - name: Deploy to Server
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.SERVER_IP }}  # Set up SERVER_IP secret in GitHub
-        username: ${{ secrets.SSH_USER }}  # Set up SSH_USER secret in GitHub
-        key: ${{ secrets.SSH_PRIVATE_KEY }}  # Set up SSH_PRIVATE_KEY secret in GitHub
-        script: |
-          cd /var/www/admin.bellybasketstore  # Replace with your directory on the server
-          git pull origin main
-          yarn install
-          yarn build
-          pm2 restart all  # PM2 to manage the process
+      - name: Deploy to Server
+        uses: appleboy/scp-action@v0.1.3
+        with:
+          host: ${{ secrets.HOST }} # Set up SERVER_IP secret in GitHub
+          username: ${{ secrets.USERNAME }} # Set up SSH_USER secret in GitHub
+          key: ${{ secrets.PASSWORD }} # Set up SSH_PRIVATE_KEY secret in GitHub
+          script: |
+            cd /var/www/admin.bellybasketstore  # Replace with your directory on the server
+            git pull origin main
+            yarn install
+            yarn build
+            pm2 restart all  # PM2 to manage the process
