@@ -64,8 +64,8 @@ export function ShopTable({
   const handleAdminLogin = (shopId: string): void => {
     const token = localStorage.getItem('custom-auth-token');
     const url = token
-      ? `https://shop-bellybasketstore.vercel.app/auth/login?token=${encodeURIComponent(token)}&shopId=${shopId}`
-      : `https://shop-bellybasketstore.vercel.app/auth/login?shopId=${shopId}`;
+      ? `https://shop.bellybasketstore.in/auth/login?token=${encodeURIComponent(token)}&shopId=${shopId}`
+      : `https://shop.bellybasketstore.in/auth/login?shopId=${shopId}`;
 
     window.open(url, '_blank', 'noopener,noreferrer');
   };

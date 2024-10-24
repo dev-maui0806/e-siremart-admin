@@ -97,7 +97,7 @@ export default function Page(): React.JSX.Element {
           <Typography variant="h4">Customers</Typography>
         </Stack>
         <div>
-          <Button
+          {/* <Button
             startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />}
             variant="contained"
             onClick={() => {
@@ -105,7 +105,7 @@ export default function Page(): React.JSX.Element {
             }}
           >
             Add
-          </Button>
+          </Button> */}
           <Button
             color="error"
             startIcon={<TrashIcon fontSize="var(--icon-fontSize-md)" />}

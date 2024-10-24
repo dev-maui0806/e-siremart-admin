@@ -58,6 +58,16 @@ export function ShopTable({
     onRowsPerPageChange(parseInt(event.target.value, 10));
   };
 
+  // Helper function to format date to 'Month day, year' (e.g. May 25, 2024)
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }).format(date);
+  };
+
   return (
     <Card>
       <Box sx={{ overflowX: 'auto' }}>
@@ -103,17 +113,28 @@ export function ShopTable({
                       }}
                     />
                   </TableCell>
+
                   <TableCell>
                     <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-                      <Avatar src={row.avatar} />
+                      {row.avatar ? (
+                        <Avatar src={row.avatar} />
+                      ) : (
+                        <Avatar>{row.name.charAt(0)}</Avatar> // Fallback to first letter of the shop name
+                      )}
                       <Typography variant="subtitle2">{row.name}</Typography>
                     </Stack>
                   </TableCell>
+
                   <TableCell>{row.owner ? `${row.owner.first_name} ${row.owner.last_name}` : 'N/A'}</TableCell>
-                  <TableCell>{row.description}</TableCell>
+
+                  <TableCell>{row.description || 'No description'}</TableCell>
+
                   <TableCell>{row.owner ? row.owner.email : 'N/A'}</TableCell>
-                  <TableCell>{row.approved ? 'Verify' : 'NotVerify'}</TableCell>
-                  <TableCell>{row.createdAt}</TableCell>
+
+                  <TableCell>{row.approved ? 'Verified' : 'Not Verified'}</TableCell>
+
+                  {/* Format the created_at date */}
+                  <TableCell>{row.created_at ? formatDate(row.created_at) : 'N/A'}</TableCell>
                 </TableRow>
               );
             })}
