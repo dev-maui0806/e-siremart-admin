@@ -11,7 +11,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 // import { Download as DownloadIcon } from '@phosphor-icons/react/dist/ssr/Download';
-import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
 import { Trash as TrashIcon } from '@phosphor-icons/react/dist/ssr/Trash';
 
 // import { Upload as UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
@@ -58,7 +57,6 @@ export default function Page(): React.JSX.Element {
   useEffect(() => {
     void fetchCustomers();
   }, [page, rowsPerPage, searchQuery]);
-
   const handleAdd = async (): Promise<void> => {
     await usersClient.addUser(newCustomer);
     setOpen(false);

@@ -124,8 +124,7 @@ export default function Page(): React.JSX.Element {
 
       // Show success notification
       openSuccessNotification('Shop Added', 'The shop has been added successfully.');
-    } catch (error) {
-      // Show error notification in case of failure
+    } catch (err) {
       openErrorNotification('Failed to Add Shop', 'There was an error adding the shop. Please try again.');
     } finally {
       setLoading(false); // Set loading state to false when the Add process is done
@@ -142,7 +141,7 @@ export default function Page(): React.JSX.Element {
 
       // Show success notification after deletion
       openSuccessNotification('Shops Deleted', 'The selected shops have been deleted successfully.');
-    } catch (error) {
+    } catch (err) {
       openErrorNotification('Failed to Delete Shops', 'There was an error deleting the selected shops.');
     } finally {
       setLoadingDelete(false); // Set loading state to false after deletion
@@ -159,7 +158,7 @@ export default function Page(): React.JSX.Element {
 
       // Show success notification after approval
       openSuccessNotification('Shops Approved', 'The selected shops have been approved successfully.');
-    } catch (error) {
+    } catch (err) {
       openErrorNotification('Failed to Approve Shops', 'There was an error approving the selected shops.');
     } finally {
       setLoadingApprove(false); // Set loading state to false after approval

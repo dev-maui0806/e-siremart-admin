@@ -79,7 +79,6 @@ export default function Page(): React.JSX.Element {
         }}
         onSelectedChange={setSelectedCustomerIds} // Pass the setSelectedCustomerIds function
       />
-
     </Stack>
   );
 }
