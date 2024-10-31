@@ -6,6 +6,7 @@ export const navItems = [
   { key: 'customers', title: 'Customers', href: paths.dashboard.customers, icon: 'users' },
   { key: 'shop', title: 'Shops', href: paths.dashboard.shop, icon: 'shops' },
   { key: 'shopAdmin', title: 'ShopAdmins', href: paths.dashboard.shopAdmin, icon: 'shopAdmins' },
+  { key: 'deliveryMan', title: 'deliveryMans', href: paths.dashboard.deliveryMans, icon: 'deliveryMan' },
   
   {
     key: 'integrations',

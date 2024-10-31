@@ -1,5 +1,5 @@
 import { Customer } from '../../types/customer';
-// import { User, isUser } from '../../types/user';
+import { DeliveryMan } from '../../types/delivery';
 
 import apiClient from '../api-client';
 
@@ -60,7 +60,7 @@ export class UsersClient {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        
+
       });
       return response.data.counts;
     } catch (error) {
@@ -93,10 +93,43 @@ export class UsersClient {
       if (response.data) {
         return { data: response.data.data, total: response.data.total };
       }
-  
+
     } catch (error) {
       // console.log(error, 'this is my network error');
       return { data: null, total: 0, error: 'Failed to fetch customers' };
+    }
+    return { data: null, total: 0, error: 'Unexpected error' };
+  }
+  // services/userService.ts
+
+  async getDeliveryMen(
+    page: number,
+    rowsPerPage: number,
+    searchQuery: string
+  ): Promise<{ data?: DeliveryMan[] | null; total?: number; error?: string }> {
+    try {
+      const token = localStorage.getItem('custom-auth-token');
+      if (!token) {
+        return { data: null };
+      }
+
+      const response = await apiClient.get('/users/deliverymans', {
+        params: {
+          page,
+          limit: rowsPerPage,
+          search: searchQuery,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data) {
+        return { data: response.data.data, total: response.data.total };
+      }
+
+    } catch (error) {
+      return { data: null, total: 0, error: 'Failed to fetch delivery personnel' };
     }
     return { data: null, total: 0, error: 'Unexpected error' };
   }
