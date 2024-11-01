@@ -16,17 +16,16 @@ import {
   Typography,
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
-import { CheckFat } from '@phosphor-icons/react';
-import { Trash as TrashIcon } from '@phosphor-icons/react';
+import { CheckFat, Trash as TrashIcon } from '@phosphor-icons/react';
 import { notification } from 'antd';
-
-import axiosInstance from '../../../../utils/axiosInstance';
 
 import type { DeliveryMan } from '@/types/delivery';
 import type { Shop } from '@/types/shop'; // Added type imports
 import { usersClient } from '@/lib/users/client';
 import { CustomersFilters } from '@/components/dashboard/deliveryMans/customers-filters';
 import { CustomersTable } from '@/components/dashboard/deliveryMans/customers-table';
+
+import axiosInstance from '../../../../utils/axiosInstance';
 
 interface ShopResponse {
   data: Shop[];
@@ -80,7 +79,13 @@ export default function Page(): React.JSX.Element {
 
       setShops(response.data.data);
     } catch (err) {
-      console.error('Error fetching shops:', err);
+      // Show notification instead of console.error
+      notification.error({
+        message: 'Fetch Error',
+        description: 'There was an error fetching shops. Please try again later.',
+        placement: 'topRight',
+        duration: 3,
+      });
     }
   };
 
@@ -192,12 +197,7 @@ export default function Page(): React.JSX.Element {
         <DialogContent>
           <FormControl fullWidth>
             <InputLabel id="shop-select-label">Shop Name</InputLabel>
-            <Select
-              labelId="shop-select-label"
-              value={selectedShop}
-              onChange={handleShopChange}
-              label="Shop Name"
-            >
+            <Select labelId="shop-select-label" value={selectedShop} onChange={handleShopChange} label="Shop Name">
               {shops.map((shop) => (
                 <MenuItem key={shop._id} value={shop.name}>
                   {shop.name}

@@ -20,7 +20,6 @@ import Typography from '@mui/material/Typography';
 
 import type { DeliveryMan } from '@/types/delivery';
 import { useSelection } from '@/hooks/use-selection';
-
 import axiosInstance from '../../../../utils/axiosInstance';
 
 interface CustomersTableProps {
@@ -44,7 +43,7 @@ export function CustomersTable({
 }: CustomersTableProps): React.JSX.Element {
   const { selectAll, deselectAll, selectOne, deselectOne, selected } = useSelection(rows.map((row) => row._id));
 
-  React.useEffect(() => {
+  React.useEffect((): void => {
     if (onSelectedChange) {
       onSelectedChange(selected);
     }
@@ -54,26 +53,26 @@ export function CustomersTable({
   const [licenseContent, setLicenseContent] = React.useState<string | null>(null);
   const [licenseType, setLicenseType] = React.useState<'pdf' | 'image' | null>(null);
 
-  const handleOpenLicense = async (licensePath: string) => {
+  const handleOpenLicense = async (licensePath: string): Promise<void> => {
     const fileName = licensePath.split('/').pop();
     if (!fileName) return;
 
     try {
-      const response = await axiosInstance.get(`/api/v1/users/delivery-license/${fileName}`, {
+      const response = await axiosInstance.get<Blob>(`/api/v1/users/delivery-license/${fileName}`, {
         responseType: 'blob',
       });
 
-      const fileType = response.data.type;
+      const fileType = response.headers['content-type'];
       const url = URL.createObjectURL(response.data);
       setLicenseContent(url);
       setLicenseType(fileType.includes('pdf') ? 'pdf' : 'image');
       setOpen(true);
     } catch (error) {
-      console.error('Error fetching the license:', error);
+      console.debug('Error fetching the license:', error);
     }
   };
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     setOpen(false);
     if (licenseContent) {
       URL.revokeObjectURL(licenseContent);
@@ -168,8 +167,12 @@ export function CustomersTable({
         page={page}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
-        onPageChange={(event, newPage) => onPageChange(newPage)}
-        onRowsPerPageChange={(event) => onRowsPerPageChange(parseInt(event.target.value, 10))}
+        onPageChange={(event, newPage) => {
+          onPageChange(newPage);
+        }}
+        onRowsPerPageChange={(event) => {
+          onRowsPerPageChange(parseInt(event.target.value, 10));
+        }}
       />
 
       <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
