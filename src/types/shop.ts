@@ -13,7 +13,7 @@ export interface Owner {
 export interface Shop {
   _id: string;
   id?: string;
-  name: string;
+  name: string
   email: string;
   approved: boolean;
   description: string;

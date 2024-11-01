@@ -7,7 +7,10 @@ interface CustomersResponseData {
   total: number;
   data: Customer[];
 }
-
+interface DeliveryManResponse {
+  data: DeliveryMan[];
+  total: number;
+}
 export class UsersClient {
   async deleteUser(userId: string): Promise<void> {
     const token = localStorage.getItem('custom-auth-token');
@@ -113,7 +116,8 @@ export class UsersClient {
         return { data: null };
       }
 
-      const response = await apiClient.get('/users/deliverymans', {
+      // Use the DeliveryManResponse interface as the generic type for apiClient.get
+      const response = await apiClient.get<DeliveryManResponse>('/users/deliverymans', {
         params: {
           page,
           limit: rowsPerPage,
