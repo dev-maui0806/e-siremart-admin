@@ -63,12 +63,12 @@ export function CustomersTable({
         responseType: 'blob',
       });
 
-      const fileType = response.headers['content-type'] || '';
+      const fileType = response.headers['content-type'] as string;
       const url = URL.createObjectURL(response.data);
       setLicenseContent(url);
       setLicenseType(fileType.includes('pdf') ? 'pdf' : 'image');
       setOpen(true);
-    } catch (error) {
+    } catch (error: unknown) {
       notification.error({
         message: 'Error',
         description: 'Failed to fetch the license file. Please try again.',
