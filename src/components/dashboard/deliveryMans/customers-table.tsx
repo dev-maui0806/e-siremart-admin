@@ -43,7 +43,6 @@ export function CustomersTable({
   onSelectedChange,
 }: CustomersTableProps): React.JSX.Element {
   const { selectAll, deselectAll, selectOne, deselectOne, selected } = useSelection(rows.map((row) => row._id));
-  console.log(rows);
 
   React.useEffect(() => {
     if (onSelectedChange) {

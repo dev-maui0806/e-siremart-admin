@@ -37,7 +37,6 @@ export function ShopTable({
 }: ShopTableProps): React.JSX.Element {
   
   const filteredRows = rows.filter((row) => row.approved);
-  console.log(filteredRows);
 
   const rowIds = React.useMemo(() => {
     return filteredRows.map((shop) => shop._id);

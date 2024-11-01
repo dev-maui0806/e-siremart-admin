@@ -17,17 +17,21 @@ import {
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { CheckFat } from '@phosphor-icons/react';
-import { Trash as TrashIcon } from '@phosphor-icons/react/dist/ssr/Trash';
+import { Trash as TrashIcon } from '@phosphor-icons/react';
 import { notification } from 'antd';
 
-import axios from 'axios';
+import axiosInstance from '../../../../utils/axiosInstance';
 
 import type { DeliveryMan } from '@/types/delivery';
+import type { Shop } from '@/types/shop'; // Added type imports
 import { usersClient } from '@/lib/users/client';
 import { CustomersFilters } from '@/components/dashboard/deliveryMans/customers-filters';
 import { CustomersTable } from '@/components/dashboard/deliveryMans/customers-table';
 
-import axiosInstance from '../../../../utils/axiosInstance';
+interface ShopResponse {
+  data: Shop[];
+  total: number;
+}
 
 export default function Page(): React.JSX.Element {
   const [deliveryMen, setDeliveryMen] = useState<DeliveryMan[]>([]);
@@ -38,8 +42,7 @@ export default function Page(): React.JSX.Element {
   const [error, setError] = useState<string | null>(null);
   const [selectedDeliveryIds, setSelectedDeliveryIds] = useState<Set<string>>(new Set());
 
-  // State for managing shop data and modal
-  const [shops, setShops] = useState<{ _id: string; name: string }[]>([]);
+  const [shops, setShops] = useState<Shop[]>([]);
   const [shopModalOpen, setShopModalOpen] = useState(false);
   const [selectedShop, setSelectedShop] = useState('');
 
@@ -57,24 +60,34 @@ export default function Page(): React.JSX.Element {
     }
   };
 
-  // Function to fetch all shops and set them in the shops state
-  const fetchAllShops = async () => {
+  const fetchAllShops = async (): Promise<void> => {
     try {
-      const response = await axiosInstance.get('/api/v1/shop/admin', {
+      const token = localStorage.getItem('custom-auth-token');
+      if (!token) {
+        notification.error({
+          message: 'Authentication Error',
+          description: 'No authentication token found. Please log in again.',
+          placement: 'topRight',
+        });
+        return;
+      }
+
+      const response = await axiosInstance.get<ShopResponse>('/api/v1/shop/admin', {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('custom-auth-token')}`,
+          Authorization: `Bearer ${token}`,
         },
       });
+
       setShops(response.data.data);
-    } catch (error) {
-      console.error('Error fetching shops:', error);
+    } catch (err) {
+      console.error('Error fetching shops:', err);
     }
   };
 
-  // Call fetchAllShops on component mount to get shop list
+  // Use useEffect to fetch data when dependencies change
   useEffect(() => {
-    fetchDeliveryMen();
-    fetchAllShops(); // Fetch and set all shops on initial load
+    void fetchDeliveryMen();
+    void fetchAllShops();
   }, [page, rowsPerPage, searchQuery]);
 
   const handleDelete = async (): Promise<void> => {
@@ -94,7 +107,7 @@ export default function Page(): React.JSX.Element {
     await fetchDeliveryMen();
   };
 
-  const handleShopModalOpen = () => {
+  const handleShopModalOpen = (): void => {
     if (selectedDeliveryIds.size === 0) {
       notification.warning({
         message: 'No Selection',
@@ -107,15 +120,15 @@ export default function Page(): React.JSX.Element {
     setShopModalOpen(true);
   };
 
-  const handleShopModalClose = () => {
+  const handleShopModalClose = (): void => {
     setShopModalOpen(false);
   };
 
-  const handleShopChange = (event: SelectChangeEvent) => {
-    setSelectedShop(event.target.value as string);
+  const handleShopChange = (event: SelectChangeEvent): void => {
+    setSelectedShop(event.target.value);
   };
 
-  const handleShopConfirm = () => {
+  const handleShopConfirm = (): void => {
     setDeliveryMen((prevDeliveryMen) =>
       prevDeliveryMen.map((person) =>
         selectedDeliveryIds.has(person._id) ? { ...person, shopName: selectedShop } : person
