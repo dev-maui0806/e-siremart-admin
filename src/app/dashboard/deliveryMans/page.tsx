@@ -2,24 +2,32 @@
 
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select, { SelectChangeEvent } from '@mui/material/Select'; // Import SelectChangeEvent
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  Typography,
+} from '@mui/material';
+import { SelectChangeEvent } from '@mui/material/Select';
 import { CheckFat } from '@phosphor-icons/react';
 import { Trash as TrashIcon } from '@phosphor-icons/react/dist/ssr/Trash';
+import { notification } from 'antd';
+
+import axios from 'axios';
 
 import type { DeliveryMan } from '@/types/delivery';
 import { usersClient } from '@/lib/users/client';
 import { CustomersFilters } from '@/components/dashboard/deliveryMans/customers-filters';
 import { CustomersTable } from '@/components/dashboard/deliveryMans/customers-table';
+
+import axiosInstance from '../../../../utils/axiosInstance';
 
 export default function Page(): React.JSX.Element {
   const [deliveryMen, setDeliveryMen] = useState<DeliveryMan[]>([]);
@@ -30,10 +38,12 @@ export default function Page(): React.JSX.Element {
   const [error, setError] = useState<string | null>(null);
   const [selectedDeliveryIds, setSelectedDeliveryIds] = useState<Set<string>>(new Set());
 
-  // State for managing shop name modal
+  // State for managing shop data and modal
+  const [shops, setShops] = useState<{ _id: string; name: string }[]>([]);
   const [shopModalOpen, setShopModalOpen] = useState(false);
   const [selectedShop, setSelectedShop] = useState('');
 
+  // Function to fetch delivery men data
   const fetchDeliveryMen = async (): Promise<void> => {
     const result = await usersClient.getDeliveryMen(page, rowsPerPage, searchQuery);
     if (result.data) {
@@ -47,19 +57,53 @@ export default function Page(): React.JSX.Element {
     }
   };
 
+  // Function to fetch all shops and set them in the shops state
+  const fetchAllShops = async () => {
+    try {
+      const response = await axiosInstance.get('/api/v1/shop/admin', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('custom-auth-token')}`,
+        },
+      });
+      setShops(response.data.data);
+    } catch (error) {
+      console.error('Error fetching shops:', error);
+    }
+  };
+
+  // Call fetchAllShops on component mount to get shop list
   useEffect(() => {
-    void fetchDeliveryMen();
+    fetchDeliveryMen();
+    fetchAllShops(); // Fetch and set all shops on initial load
   }, [page, rowsPerPage, searchQuery]);
 
   const handleDelete = async (): Promise<void> => {
+    if (selectedDeliveryIds.size === 0) {
+      notification.warning({
+        message: 'No Selection',
+        description: 'Please select at least one row to delete.',
+        placement: 'topRight',
+        duration: 3,
+      });
+      return;
+    }
+
     const deletePromises = Array.from(selectedDeliveryIds).map((id) => usersClient.deleteUser(id));
     await Promise.all(deletePromises);
     setSelectedDeliveryIds(new Set());
     await fetchDeliveryMen();
   };
 
-  // Open and close modal for selecting shop
   const handleShopModalOpen = () => {
+    if (selectedDeliveryIds.size === 0) {
+      notification.warning({
+        message: 'No Selection',
+        description: 'Please select at least one row to proceed.',
+        placement: 'topRight',
+        duration: 3,
+      });
+      return;
+    }
     setShopModalOpen(true);
   };
 
@@ -67,10 +111,17 @@ export default function Page(): React.JSX.Element {
     setShopModalOpen(false);
   };
 
-  // Handle shop selection
   const handleShopChange = (event: SelectChangeEvent) => {
-    // Use SelectChangeEvent here
     setSelectedShop(event.target.value as string);
+  };
+
+  const handleShopConfirm = () => {
+    setDeliveryMen((prevDeliveryMen) =>
+      prevDeliveryMen.map((person) =>
+        selectedDeliveryIds.has(person._id) ? { ...person, shopName: selectedShop } : person
+      )
+    );
+    handleShopModalClose();
   };
 
   return (
@@ -85,7 +136,7 @@ export default function Page(): React.JSX.Element {
             startIcon={<TrashIcon fontSize="var(--icon-fontSize-md)" />}
             variant="contained"
             onClick={handleDelete}
-            disabled={selectedDeliveryIds.size === 0} // Disable if no items are selected
+            disabled={deliveryMen.length === 0}
             sx={{ ml: 1 }}
           >
             Delete
@@ -95,14 +146,11 @@ export default function Page(): React.JSX.Element {
             startIcon={<CheckFat fontSize="var(--icon-fontSize-md)" />}
             variant="contained"
             onClick={handleShopModalOpen}
-            disabled={selectedDeliveryIds.size === 0} // Disable if no items are selected
+            disabled={deliveryMen.length === 0}
             sx={{ ml: 1 }}
           >
             Select Shop or Verify
           </Button>
-          {/* <Button color="primary" variant="contained" onClick={handleShopModalOpen} sx={{ ml: 1 }}>
-            Select Shop
-          </Button> */}
         </div>
       </Stack>
       <CustomersFilters
@@ -131,11 +179,17 @@ export default function Page(): React.JSX.Element {
         <DialogContent>
           <FormControl fullWidth>
             <InputLabel id="shop-select-label">Shop Name</InputLabel>
-            <Select labelId="shop-select-label" value={selectedShop} onChange={handleShopChange} label="Shop Name">
-              <MenuItem value="Shop1">Shop1</MenuItem>
-              <MenuItem value="Shop2">Shop2</MenuItem>
-              <MenuItem value="Shop3">Shop3</MenuItem>
-              {/* Add more shop options as needed */}
+            <Select
+              labelId="shop-select-label"
+              value={selectedShop}
+              onChange={handleShopChange}
+              label="Shop Name"
+            >
+              {shops.map((shop) => (
+                <MenuItem key={shop._id} value={shop.name}>
+                  {shop.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </DialogContent>
@@ -143,14 +197,7 @@ export default function Page(): React.JSX.Element {
           <Button onClick={handleShopModalClose} color="primary">
             Cancel
           </Button>
-          <Button
-            onClick={() => {
-              console.log('Selected Shop:', selectedShop); // You can handle the selected shop here
-              handleShopModalClose();
-            }}
-            color="primary"
-            variant="contained"
-          >
+          <Button onClick={handleShopConfirm} color="primary" variant="contained">
             Confirm
           </Button>
         </DialogActions>

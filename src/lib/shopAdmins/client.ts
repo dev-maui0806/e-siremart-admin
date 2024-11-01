@@ -65,6 +65,7 @@ export class ShopClient {
       throw new Error('Failed to fetch customer count');
     }
   }
+  
   async getUniversities(
     page: number,
     rowsPerPage: number,
