@@ -17,6 +17,7 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
+import { notification } from 'antd';
 
 import type { DeliveryMan } from '@/types/delivery';
 import { useSelection } from '@/hooks/use-selection';
@@ -62,13 +63,17 @@ export function CustomersTable({
         responseType: 'blob',
       });
 
-      const fileType = response.headers['content-type'];
+      const fileType = response.headers['content-type'] || '';
       const url = URL.createObjectURL(response.data);
       setLicenseContent(url);
       setLicenseType(fileType.includes('pdf') ? 'pdf' : 'image');
       setOpen(true);
     } catch (error) {
-      console.debug('Error fetching the license:', error);
+      notification.error({
+        message: 'Error',
+        description: 'Failed to fetch the license file. Please try again.',
+        placement: 'topRight',
+      });
     }
   };
 
