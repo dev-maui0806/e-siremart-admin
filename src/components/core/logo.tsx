@@ -27,7 +27,7 @@ export function Logo({ color = 'dark', emblem }: LogoProps): React.JSX.Element {
     url = color === 'light' ? '/assets/logo.svg' : '/assets/logo-dark.png';
   }
 
-  return <Box alt="logo" component="img" height="80px" src={url} width="auto" />;
+  return <Box alt="logo" component="img" height="auto" src={url} width="170px" />;
 }
 
 export interface DynamicLogoProps {
