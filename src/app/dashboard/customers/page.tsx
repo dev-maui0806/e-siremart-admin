@@ -57,6 +57,7 @@ export default function Page(): React.JSX.Element {
   useEffect(() => {
     void fetchCustomers();
   }, [page, rowsPerPage, searchQuery]);
+
   const handleAdd = async (): Promise<void> => {
     await usersClient.addUser(newCustomer);
     setOpen(false);

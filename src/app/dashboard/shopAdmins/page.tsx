@@ -77,7 +77,7 @@ export default function Page(): React.JSX.Element {
         onRowsPerPageChange={(newRowsPerPage) => {
           setRowsPerPage(newRowsPerPage);
         }}
-        onSelectedChange={setSelectedCustomerIds} // Pass the setSelectedCustomerIds function
+        onSelectedChange={setSelectedCustomerIds}
       />
     </Stack>
   );

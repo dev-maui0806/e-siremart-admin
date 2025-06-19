@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { getBESiteURL } from './get-site-url';
+import { getSiteURL } from './get-site-url';
 
 const apiClient = axios.create({
-  baseURL: getBESiteURL(),
+  baseURL: getSiteURL(),
   headers: {
     'Content-Type': 'application/json'
   }

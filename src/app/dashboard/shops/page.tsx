@@ -32,8 +32,6 @@ export default function Page(): React.JSX.Element {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState<Set<string>>(new Set());
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false); // Loading state for the Add button
-  const [loadingDelete, setLoadingDelete] = useState(false); // Loading state for the Delete button
-  const [loadingApprove, setLoadingApprove] = useState(false); // Loading state for the Approve button
   const [newCustomer, setNewCustomer] = useState<Shop>({
     _id: '',
     name: '',
@@ -132,7 +130,6 @@ export default function Page(): React.JSX.Element {
   };
 
   const handleDelete = async (): Promise<void> => {
-    setLoadingDelete(true); // Set loading state for the Delete button
     try {
       const deletePromises = Array.from(selectedCustomerIds).map((id) => shopClient.deleteShop(id));
       await Promise.all(deletePromises);
@@ -143,13 +140,10 @@ export default function Page(): React.JSX.Element {
       openSuccessNotification('Shops Deleted', 'The selected shops have been deleted successfully.');
     } catch (err) {
       openErrorNotification('Failed to Delete Shops', 'There was an error deleting the selected shops.');
-    } finally {
-      setLoadingDelete(false); // Set loading state to false after deletion
     }
   };
 
   const handleApprove = async (): Promise<void> => {
-    setLoadingApprove(true); // Set loading state for the Approve button
     try {
       const approvePromises = Array.from(selectedCustomerIds).map((id) => shopClient.approveShop(id));
       await Promise.all(approvePromises);
@@ -160,8 +154,6 @@ export default function Page(): React.JSX.Element {
       openSuccessNotification('Shops Approved', 'The selected shops have been approved successfully.');
     } catch (err) {
       openErrorNotification('Failed to Approve Shops', 'There was an error approving the selected shops.');
-    } finally {
-      setLoadingApprove(false); // Set loading state to false after approval
     }
   };
 
@@ -187,27 +179,23 @@ export default function Page(): React.JSX.Element {
           </Button>
           <Button
             color="error"
-            startIcon={
-              loadingDelete ? <CircularProgress size={20} /> : <TrashIcon fontSize="var(--icon-fontSize-md)" />
-            } // Show spinner when deleting
+            startIcon={<TrashIcon fontSize="var(--icon-fontSize-md)" />}
             variant="contained"
             onClick={handleDelete}
-            disabled={selectedCustomerIds.size === 0 || loadingDelete} // Disable button while deleting
+            disabled={selectedCustomerIds.size === 0}
             sx={{ ml: 1 }}
           >
-            {loadingDelete ? 'Deleting...' : 'Delete'}
+            Delete
           </Button>
           <Button
             color="info"
-            startIcon={
-              loadingApprove ? <CircularProgress size={20} /> : <CheckFat fontSize="var(--icon-fontSize-md)" />
-            } // Show spinner when approving
+            startIcon={<CheckFat fontSize="var(--icon-fontSize-md)" />}
             variant="contained"
             onClick={handleApprove}
-            disabled={selectedCustomerIds.size === 0 || loadingApprove} // Disable button while approving
+            disabled={selectedCustomerIds.size === 0}
             sx={{ ml: 1 }}
           >
-            {loadingApprove ? 'Approving...' : 'Approve'}
+            Approve
           </Button>
         </div>
       </Stack>
@@ -228,7 +216,7 @@ export default function Page(): React.JSX.Element {
         onRowsPerPageChange={(newRowsPerPage) => {
           setRowsPerPage(newRowsPerPage);
         }}
-        onSelectedChange={setSelectedCustomerIds} // Pass the setSelectedCustomerIds function
+        onSelectedChange={setSelectedCustomerIds}
       />
       <Dialog
         open={open}

@@ -1,5 +1,5 @@
-import { Customer } from '../../types/customer';
-import { DeliveryMan } from '../../types/delivery';
+import type { Customer } from '../../types/customer';
+import type { DeliveryMan } from '../../types/delivery';
 
 import apiClient from '../api-client';
 
